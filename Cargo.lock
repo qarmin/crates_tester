@@ -64,7 +64,7 @@ checksum = "5916d2ae698f6de9bfb891ad7a8d65c09d232dc58cc4ac433c7da3b2fd84bc2b"
 [[package]]
 name = "lofty"
 version = "0.6.2"
-source = "git+https://github.com/Serial-ATA/lofty-rs/#22664734cfcba7e08db15d7f36b11deea330d3c6"
+source = "git+https://github.com/Serial-ATA/lofty-rs/#fe0462bf8ad0dfce3db1b40f655130466c5f46a2"
 dependencies = [
  "base64",
  "byteorder",
