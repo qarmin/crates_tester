@@ -4,14 +4,13 @@ use std::path::Path;
 use std::process::Command;
 use std::sync::atomic::compiler_fence;
 
-pub fn infer_check() {
+pub fn infer_check(directories: Vec<&str>) {
     let allowed_extensions = vec![];
     let disabled_extensions = vec!["cache", "file"];
-    let checked_dir = vec!["/home/"]; //,"/mnt/","/media/rafal/Disk/Untitled Folder"];
 
-    let collected_files = collect_files(checked_dir, allowed_extensions, disabled_extensions);
+    let collected_files = collect_files(directories, allowed_extensions, disabled_extensions);
 
-    let extensions_to_print = ["xml"];
+    let extensions_to_print = [];
     let extensions: Vec<_> = collected_files
         .into_par_iter()
         .filter_map(|path| {
@@ -34,7 +33,7 @@ pub fn infer_check() {
                     }
                 }
                 Err(e) => {
-                    println!("WRONG SOMEThING {} - {}", e, path);
+                    println!("{} - {}", path, e);
                 }
             }
 
@@ -43,7 +42,7 @@ pub fn infer_check() {
         .collect();
     let new_vec = count_number_of_vec_items(extensions);
     for (ext, number) in new_vec {
-        if number > 100 {
+        if number > 0 {
             println!("{} - {}", number, ext);
         }
     }

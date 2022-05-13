@@ -1,12 +1,11 @@
 use crate::{collect_files, count_number_of_vec_items};
 use std::path::Path;
 
-pub fn mime_check() {
+pub fn mime_check(directories: Vec<&str>) {
     let allowed_extensions = vec![];
     let excluded_extensions = vec![];
-    let checked_dir = vec!["/home/", "/mnt"];
 
-    let collected_files = collect_files(checked_dir, allowed_extensions, excluded_extensions);
+    let collected_files = collect_files(directories, allowed_extensions, excluded_extensions);
 
     let collected_extensions: Vec<_> = collected_files
         .into_iter()

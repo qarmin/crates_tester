@@ -1,5 +1,5 @@
 [package]
-name = "test_thing"
+name = "crates_tester"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 walkdir = "2.3.2"
 rayon = "1.5.2"
-lofty = {git = "https://github.com/Serial-ATA/lofty-rs/"}
+lofty = { git = "https://github.com/Serial-ATA/lofty-rs/" }
 mime_guess = { git = "https://github.com/abonander/mime_guess" }
-infer = {git = "https://github.com/bojand/infer"}
+infer = { git = "https://github.com/bojand/infer" }
+image = { git = "https://github.com/image-rs/image" }

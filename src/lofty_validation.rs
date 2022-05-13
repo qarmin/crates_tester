@@ -3,15 +3,18 @@ use lofty::error::ErrorKind::{Io, UnknownFormat};
 use lofty::{read_from_path, AudioFile, ItemKey};
 use rayon::prelude::*;
 
-pub fn lofty_check() {
+pub fn lofty_check(directories: Vec<&str>) {
     let allowed_extensions = vec![
         "mp3", "flac", "wav", "ogg", "m4a", "aac", "aiff", "pcm", "ac3", "aif", "aiff", "aifc",
-        "m3a", "mp2", "mp4a", "mp2a", "mpga", "oga", "opus", "wave", "weba", "wma",
+        "m3a", "mp2", "mp4a", "mp2a", "mpga", "opus", "wave", "weba",
+        "wma",
+        // , "oga" // Not supported via read_from_path
     ];
-    let excluded_extensions = vec![];
-    let checked_dir = vec!["/home/"]; //,"/mnt/","/media/rafal/Disk/Untitled Folder"];
+    let excluded_extensions = vec![
+        "mp4", "3gp", // Not interested in video files, but looks that are supported
+    ];
 
-    let collected_files = collect_files(checked_dir, allowed_extensions, excluded_extensions);
+    let collected_files = collect_files(directories, allowed_extensions, excluded_extensions);
 
     collected_files.into_par_iter().for_each(|path| {
         if path.contains(".cargo") {
@@ -21,16 +24,15 @@ pub fn lofty_check() {
             Ok(t) => t,
             Err(e) => {
                 match e.kind() {
-                    UnknownFormat | Io(_) => {}
+                    Io(_) => {}
                     _ => {
                         println!("Invalid file - {}, {}", path, e)
                     }
                 }
-                println!("Invalid file - {}, {}", path, e);
                 return;
             }
         };
-
+        // println!("Valid file - {}", path);
         let properties = tagged_file.properties();
 
         let mut track_title: String = "".to_string();

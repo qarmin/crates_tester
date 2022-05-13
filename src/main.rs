@@ -1,3 +1,7 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
+
+mod image;
 mod infer;
 mod infer_single;
 mod lofty_validation;
@@ -7,17 +11,52 @@ use crate::infer::infer_check;
 use crate::lofty_validation::lofty_check;
 use crate::mime_check_extensions::mime_check;
 
+use crate::image::image_check;
 use crate::infer_single::infer_single;
 use std::cmp::Ordering;
 use std::collections::HashMap;
+use std::env;
 use std::hash::Hash;
 use walkdir::WalkDir;
 
+/// Excluded extensions
 fn main() {
-    // lofty_check();
-    // mime_check();
-    // infer_check();
-    infer_single();
+    let included_directories: Vec<_> = env::args().collect();
+    if included_directories.len() < 3 {
+        println!("App must provide at least type of check and directories");
+        return;
+    }
+    let type_check = &included_directories[1];
+    let mut directories_to_check = Vec::new();
+    let mut included_extensions = Vec::new();
+    let mut excluded_extensions = Vec::new();
+    for thing in included_directories.iter().skip(2) {
+        if let Some(good) = thing.strip_prefix("-i") {
+            included_extensions.push(good);
+        } else if let Some(good) = thing.strip_prefix("-e") {
+            excluded_extensions.push(good);
+        } else {
+            directories_to_check.push(thing.as_str());
+        }
+    }
+
+    match type_check.to_ascii_lowercase().as_str() {
+        "image" => {
+            image_check(directories_to_check);
+        }
+        "lofty" => {
+            lofty_check(directories_to_check);
+        }
+        "mime" => {
+            mime_check(directories_to_check);
+        }
+        "infer" => {
+            infer_check(directories_to_check);
+        }
+        e => {
+            println!("Not supported option - {}", e)
+        }
+    }
 }
 
 fn collect_files(
@@ -37,7 +76,7 @@ fn collect_files(
             }
 
             if let Some(extension) = path.extension() {
-                let extension = extension.to_string_lossy().to_string();
+                let extension = extension.to_string_lossy().to_lowercase();
                 if !allowed_extensions.is_empty()
                     && !allowed_extensions.contains(&extension.as_str())
                 {
@@ -53,7 +92,7 @@ fn collect_files(
             collected_files.push(path.to_string_lossy().to_string());
         }
     }
-    println!("Collected files to scan");
+    println!("Collected files to scan({})", collected_files.len());
     collected_files
 }
 
