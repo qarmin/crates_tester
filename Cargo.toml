@@ -20,3 +20,8 @@ zip = { git = "https://github.com/zip-rs/zip" }
 #zip = ""
 symphonia = {git = "https://github.com/pdeljanov/Symphonia", features=["mp3","aac","alac","flac","isomp4","mkv","ogg","pcm","vorbis","wav"]}
 #symphonia = {version="0.5", features=["mp3","aac","alac","flac","isomp4","mkv","ogg","pcm","vorbis","wav"]}
+
+[profile.release]
+# Panic = "abort" will crash entire app when processing invalid image file.
+# Since crash happens in external library, this is only way to handle this(I think).
+panic = "unwind"

@@ -1,5 +1,5 @@
 use crate::collect_files;
-use lofty::error::ErrorKind::{Io};
+use lofty::error::ErrorKind::Io;
 use lofty::{read_from_path, AudioFile, ItemKey};
 use rayon::prelude::*;
 

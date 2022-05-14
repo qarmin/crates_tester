@@ -1,7 +1,6 @@
-use crate::{collect_files};
+use crate::collect_files;
 use rayon::prelude::*;
 use std::fs;
-
 
 pub fn zip_check(directories: Vec<&str>) {
     let allowed_extensions = vec!["zip"];

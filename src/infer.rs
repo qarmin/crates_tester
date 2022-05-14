@@ -3,7 +3,6 @@ use rayon::prelude::*;
 use std::path::Path;
 use std::process::Command;
 
-
 pub fn infer_check(directories: Vec<&str>, print_results: bool) {
     let allowed_extensions = vec![];
     let disabled_extensions = vec!["cache", "file"];

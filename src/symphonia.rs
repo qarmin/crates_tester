@@ -1,10 +1,8 @@
-use crate::{collect_files};
+use crate::collect_files;
 use rayon::prelude::*;
-use std::fs;
 use std::fs::File;
 use std::io;
-
-
+use std::{fs, panic};
 
 use symphonia::core::codecs::CODEC_TYPE_NULL;
 use symphonia::core::errors::Error;
@@ -12,21 +10,28 @@ use symphonia::core::errors::Error::IoError;
 use symphonia::core::io::MediaSourceStream;
 
 pub fn symphonia_check(directories: Vec<&str>) {
-    let allowed_extensions = vec![];
-    let disabled_extensions = vec![
+    let allowed_extensions = vec![
         "mp3", "flac", "wav", "ogg", "m4a", "aac", "aiff", "pcm", "ac3", "aif", "aiff", "aifc",
-        "m3a", "mp2", "mp4a", "mp2a", "mpga", "opus", "wave", "weba", "wma",
+        "m3a", "mp2", "mp4a", "mp2a", "mpga", "opus", "wave", "weba", "wma", "oga",
     ];
+    let disabled_extensions = vec![];
 
     let collected_files = collect_files(directories, allowed_extensions, disabled_extensions);
 
-    collected_files.into_iter().for_each(|path| {
-        if let Ok(file) = fs::File::open(&path) {
-            println!("Checking {}", path);
-            if let Err(_e) = parse_audio_file(file) {
-                // println!("{}    -     {}", path, e);
-            } else {
-                println!("VALID   {}", path);
+    collected_files.into_par_iter().for_each(|path| {
+        if let Ok(file) = File::open(&path) {
+            // println!("Checking {}", path);
+
+            let result = panic::catch_unwind(|| {
+                if let Err(e) = parse_audio_file(file) {
+                    println!("{}    -     {}", path, e);
+                } else {
+                    // println!("VALID   {}", path);
+                }
+            });
+
+            if let Err(_e) = result {
+                println!("BIG ERROR - {} crashed please report bug to https://github.com/pdeljanov/Symphonia", path);
             }
         }
     });

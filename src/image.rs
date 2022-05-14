@@ -1,8 +1,6 @@
-use crate::{collect_files};
+use crate::collect_files;
 use rayon::prelude::*;
 use std::path::Path;
-
-
 
 pub fn image_check(directories: Vec<&str>) {
     let allowed_extensions = vec![
