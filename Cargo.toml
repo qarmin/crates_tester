@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 walkdir = "2.3"
 rayon = "1.5"
+
 lofty = { git = "https://github.com/Serial-ATA/lofty-rs/" }
 #lofty = ""
 mime_guess = { git = "https://github.com/abonander/mime_guess" }
@@ -22,6 +23,8 @@ symphonia = {git = "https://github.com/pdeljanov/Symphonia", features=["mp3","aa
 #symphonia = {version="0.5", features=["mp3","aac","alac","flac","isomp4","mkv","ogg","pcm","vorbis","wav"]}
 #ooxml = {git = "https://github.com/zitsen/ooxml-rs" }
 #ooxml = ""
+pdf = {git = "https://github.com/pdf-rs/pdf/"}
+#pdf = ""
 
 [profile.release]
 # Panic = "abort" will crash entire app when processing invalid image file.

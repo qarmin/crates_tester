@@ -4,6 +4,7 @@ mod infer_single;
 mod lofty_validation;
 mod mime_check_extensions;
 // mod ooxml;
+mod pdf;
 mod symphonia;
 mod zip;
 
@@ -13,6 +14,7 @@ use crate::mime_check_extensions::mime_check;
 
 use crate::image::image_check;
 
+use crate::pdf::pdf_check;
 use crate::symphonia::symphonia_check;
 use crate::zip::zip_check;
 use std::cmp::Ordering;
@@ -63,6 +65,9 @@ fn main() {
         }
         "symphonia" => {
             symphonia_check(directories_to_check);
+        }
+        "pdf" => {
+            pdf_check(directories_to_check);
         }
         // "ooxml" => { // Too unstable, too many crashes
         //     ooxml_check(directories_to_check);
