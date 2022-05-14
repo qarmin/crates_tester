@@ -33,7 +33,7 @@ pub fn pdf_check(directories: Vec<&str>) {
                     if let InvalidPassword = error {
                         return;
                     }
-                    println!("{}    -     {:?}", path, error);
+                    println!("{}    -     {}", path, error);
                 } else {
                     // println!("VALID   {}", path);
                 }
