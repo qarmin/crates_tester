@@ -3,6 +3,7 @@ mod infer;
 mod infer_single;
 mod lofty_validation;
 mod mime_check_extensions;
+// mod ooxml;
 mod symphonia;
 mod zip;
 
@@ -63,6 +64,9 @@ fn main() {
         "symphonia" => {
             symphonia_check(directories_to_check);
         }
+        // "ooxml" => { // Too unstable, too many crashes
+        //     ooxml_check(directories_to_check);
+        // }
         e => {
             println!("Not supported option - {}", e)
         }
@@ -73,7 +77,7 @@ fn collect_files(
     checked_dirs: Vec<&str>,
     allowed_extensions: Vec<&str>,
     excluded_extensions: Vec<&str>,
-) -> Vec<String> {
+) -> Vec<(String, String)> {
     let mut collected_files = Vec::new();
     for dir in checked_dirs {
         for entry in WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
@@ -84,9 +88,13 @@ fn collect_files(
             if path.to_string_lossy().contains(".cargo") {
                 continue;
             }
+            let extension;
 
-            if let Some(extension) = path.extension() {
-                let extension = extension.to_string_lossy().to_lowercase();
+            if let Some(p_extension) = path.extension() {
+                extension = p_extension.to_string_lossy().to_lowercase();
+                if extension.len() > 10 {
+                    continue;
+                }
                 if !allowed_extensions.is_empty()
                     && !allowed_extensions.contains(&extension.as_str())
                 {
@@ -99,7 +107,7 @@ fn collect_files(
                 continue;
             }
 
-            collected_files.push(path.to_string_lossy().to_string());
+            collected_files.push((path.to_string_lossy().to_string(), extension));
         }
     }
     println!("Collected files to scan({})", collected_files.len());

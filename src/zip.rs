@@ -12,13 +12,15 @@ pub fn zip_check(directories: Vec<&str>) {
 
     let collected_files = collect_files(directories, allowed_extensions, disabled_extensions);
 
-    collected_files.into_par_iter().for_each(|path| {
-        if let Ok(file) = fs::File::open(&path) {
-            if let Err(e) = zip::ZipArchive::new(file) {
-                println!("{}    -     {}", path, e);
-            } else {
-                // println!("VALID   {}", path);
+    collected_files
+        .into_par_iter()
+        .for_each(|(path, _extension)| {
+            if let Ok(file) = fs::File::open(&path) {
+                if let Err(e) = zip::ZipArchive::new(file) {
+                    println!("{}    -     {}", path, e);
+                } else {
+                    // println!("VALID   {}", path);
+                }
             }
-        }
-    });
+        });
 }

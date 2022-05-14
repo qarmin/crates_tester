@@ -11,11 +11,13 @@ pub fn image_check(directories: Vec<&str>) {
 
     let collected_files = collect_files(directories, allowed_extensions, disabled_extensions);
 
-    collected_files.into_par_iter().for_each(|path| {
-        if let Err(e) = image::open(Path::new(&path)) {
-            println!("{}       -       {}", path, e);
-        } else {
-            // println!("{}", path); // Enable in case of trying to find image extensions that are suported by image-rs library
-        }
-    });
+    collected_files
+        .into_par_iter()
+        .for_each(|(path, _extension)| {
+            if let Err(e) = image::open(Path::new(&path)) {
+                println!("{}       -       {}", path, e);
+            } else {
+                // println!("{}", path); // Enable in case of trying to find image extensions that are suported by image-rs library
+            }
+        });
 }

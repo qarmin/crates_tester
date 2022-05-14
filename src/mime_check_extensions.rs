@@ -9,21 +9,15 @@ pub fn mime_check(directories: Vec<&str>, print_results: bool) {
 
     let collected_extensions: Vec<_> = collected_files
         .into_iter()
-        .filter_map(|path| {
+        .filter_map(|(path, extension)| {
             let path = Path::new(&path);
-            if let Some(extension) = path.extension() {
-                if extension.len() > 10 {
-                    return None; // This is mostly a really invalid extension
+            let mime_g = mime_guess::from_ext(extension.as_str());
+            let mime_number = mime_g.iter().count();
+            if mime_number == 0 {
+                if print_results {
+                    println!("{:?}", path);
                 }
-                let extension = extension.to_string_lossy().to_string();
-                let mime_g = mime_guess::from_ext(extension.as_str());
-                let mime_number = mime_g.iter().count();
-                if mime_number == 0 {
-                    if print_results {
-                        println!("{:?}", path);
-                    }
-                    return Some(extension);
-                }
+                return Some(extension);
             }
             None
         })

@@ -11,34 +11,28 @@ pub fn infer_check(directories: Vec<&str>, print_results: bool) {
 
     let extensions: Vec<_> = collected_files
         .into_par_iter()
-        .filter_map(|path| {
-            if let Some(extension) = Path::new(&path).extension() {
-                let extension = extension.to_string_lossy().to_lowercase();
-                if extension.len() > 10 {
-                    return None; // This is mostly a really invalid extension
-                }
-                match infer::get_from_path(Path::new(&path)) {
-                    Ok(good) => {
-                        if good.is_none() {
-                            // Prints also
-                            if print_results {
-                                let output = match Command::new("file").arg(&path).output() {
-                                    Ok(t) => t,
-                                    Err(e) => {
-                                        println!("Failed to run file command, reason {}", e);
-                                        return None;
-                                    }
-                                };
-                                let mut output = String::from_utf8(output.stdout).unwrap();
-                                output.pop(); // Removes new line \n
-                                println!("{} - {}", path, output);
-                            }
-                            return Some(extension);
+        .filter_map(|(path, extension)| {
+            match infer::get_from_path(Path::new(&path)) {
+                Ok(good) => {
+                    if good.is_none() {
+                        // Prints also
+                        if print_results {
+                            let output = match Command::new("file").arg(&path).output() {
+                                Ok(t) => t,
+                                Err(e) => {
+                                    println!("Failed to run file command, reason {}", e);
+                                    return None;
+                                }
+                            };
+                            let mut output = String::from_utf8(output.stdout).unwrap();
+                            output.pop(); // Removes new line \n
+                            println!("{} - {}", path, output);
                         }
+                        return Some(extension);
                     }
-                    Err(e) => {
-                        println!("{} - {}", path, e);
-                    }
+                }
+                Err(e) => {
+                    println!("{} - {}", path, e);
                 }
             }
 
