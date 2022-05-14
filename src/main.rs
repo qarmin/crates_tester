@@ -11,7 +11,7 @@ use crate::lofty_validation::lofty_check;
 use crate::mime_check_extensions::mime_check;
 
 use crate::image::image_check;
-use crate::infer_single::infer_single;
+
 use crate::symphonia::symphonia_check;
 use crate::zip::zip_check;
 use std::cmp::Ordering;

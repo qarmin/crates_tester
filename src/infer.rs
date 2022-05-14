@@ -2,7 +2,7 @@ use crate::{collect_files, count_number_of_vec_items};
 use rayon::prelude::*;
 use std::path::Path;
 use std::process::Command;
-use std::sync::atomic::compiler_fence;
+
 
 pub fn infer_check(directories: Vec<&str>, print_results: bool) {
     let allowed_extensions = vec![];

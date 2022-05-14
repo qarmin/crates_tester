@@ -1,11 +1,11 @@
-use crate::{collect_files, count_number_of_vec_items};
+use crate::{collect_files};
 use rayon::prelude::*;
 use std::fs;
 use std::fs::File;
 use std::io;
-use std::path::Path;
-use std::process::Command;
-use std::sync::atomic::compiler_fence;
+
+
+
 use symphonia::core::codecs::CODEC_TYPE_NULL;
 use symphonia::core::errors::Error;
 use symphonia::core::errors::Error::IoError;
@@ -23,7 +23,7 @@ pub fn symphonia_check(directories: Vec<&str>) {
     collected_files.into_iter().for_each(|path| {
         if let Ok(file) = fs::File::open(&path) {
             println!("Checking {}", path);
-            if let Err(e) = parse_audio_file(file) {
+            if let Err(_e) = parse_audio_file(file) {
                 // println!("{}    -     {}", path, e);
             } else {
                 println!("VALID   {}", path);
