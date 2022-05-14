@@ -1,7 +1,7 @@
 use crate::{collect_files, count_number_of_vec_items};
 use std::path::Path;
 
-pub fn mime_check(directories: Vec<&str>) {
+pub fn mime_check(directories: Vec<&str>, print_results: bool) {
     let allowed_extensions = vec![];
     let excluded_extensions = vec![];
 
@@ -12,10 +12,16 @@ pub fn mime_check(directories: Vec<&str>) {
         .filter_map(|path| {
             let path = Path::new(&path);
             if let Some(extension) = path.extension() {
+                if extension.len() > 10 {
+                    return None; // This is mostly a really invalid extension
+                }
                 let extension = extension.to_string_lossy().to_string();
                 let mime_g = mime_guess::from_ext(extension.as_str());
                 let mime_number = mime_g.iter().count();
                 if mime_number == 0 {
+                    if print_results {
+                        println!("{:?}", path);
+                    }
                     return Some(extension);
                 }
             }

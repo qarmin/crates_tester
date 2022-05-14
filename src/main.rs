@@ -1,11 +1,10 @@
-#![allow(unused_imports)]
-#![allow(dead_code)]
-
 mod image;
 mod infer;
 mod infer_single;
 mod lofty_validation;
 mod mime_check_extensions;
+mod symphonia;
+mod zip;
 
 use crate::infer::infer_check;
 use crate::lofty_validation::lofty_check;
@@ -13,6 +12,8 @@ use crate::mime_check_extensions::mime_check;
 
 use crate::image::image_check;
 use crate::infer_single::infer_single;
+use crate::symphonia::symphonia_check;
+use crate::zip::zip_check;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::env;
@@ -27,6 +28,7 @@ fn main() {
         return;
     }
     let type_check = &included_directories[1];
+    let mut print_results = false;
     let mut directories_to_check = Vec::new();
     let mut included_extensions = Vec::new();
     let mut excluded_extensions = Vec::new();
@@ -35,6 +37,8 @@ fn main() {
             included_extensions.push(good);
         } else if let Some(good) = thing.strip_prefix("-e") {
             excluded_extensions.push(good);
+        } else if thing == "PRINT" {
+            print_results = true;
         } else {
             directories_to_check.push(thing.as_str());
         }
@@ -48,10 +52,16 @@ fn main() {
             lofty_check(directories_to_check);
         }
         "mime" => {
-            mime_check(directories_to_check);
+            mime_check(directories_to_check, print_results);
         }
         "infer" => {
-            infer_check(directories_to_check);
+            infer_check(directories_to_check, print_results);
+        }
+        "zip" => {
+            zip_check(directories_to_check);
+        }
+        "symphonia" => {
+            symphonia_check(directories_to_check);
         }
         e => {
             println!("Not supported option - {}", e)
