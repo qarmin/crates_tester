@@ -1,14 +1,13 @@
 use crate::collect_files;
 use lofty::error::ErrorKind::Io;
-use lofty::{read_from_path, AudioFile, ItemKey};
+use lofty::{read_from, AudioFile, ItemKey};
 use rayon::prelude::*;
+use std::fs::File;
 
 pub fn lofty_check(directories: Vec<&str>) {
     let allowed_extensions = vec![
-        "mp3", "flac", "wav", "ogg", "m4a", "aac", "aiff", "pcm", "ac3", "aif", "aiff", "aifc",
-        "m3a", "mp2", "mp4a", "mp2a", "mpga", "opus", "wave", "weba",
-        "wma",
-        // , "oga" // Not supported via read_from_path
+        "mp3", "flac", "wav", "m4a", "aac", "aiff", "pcm", "ac3", "aif", "aiff", "aifc", "m3a",
+        "mp2", "mp4a", "mp2a", "mpga", "opus", "wave", "weba", "wma", "oga", "ogg",
     ];
     let excluded_extensions = vec![
         "mp4", "3gp", // Not interested in video files, but looks that are supported
@@ -19,12 +18,15 @@ pub fn lofty_check(directories: Vec<&str>) {
     collected_files
         .into_par_iter()
         .for_each(|(path, _extension)| {
-            if path.contains(".cargo") {
-                return;
-            }
-            let tagged_file = match read_from_path(&path, true) {
+            let mut file = match File::open(&path) {
+                Ok(t) => t,
+                Err(_) => return,
+            };
+            let tagged_file = match read_from(&mut file, true) {
                 Ok(t) => t,
                 Err(e) => {
+                    println!("Invalid file - {}, {}", path, e);
+
                     match e.kind() {
                         Io(_) => {}
                         _ => {

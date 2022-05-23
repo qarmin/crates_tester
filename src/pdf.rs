@@ -29,7 +29,7 @@ pub fn pdf_check(directories: Vec<&str>) {
                     allow_missing_endobj: true,
                 };
                 if let Err(e) = pdf::file::File::from_data_with_options(content, parser_options) {
-                    let error = unpack_error(e);
+                    let error = unpack_pdf_error(e);
                     if let InvalidPassword = error {
                         return;
                     }
@@ -48,8 +48,7 @@ pub fn pdf_check(directories: Vec<&str>) {
         });
 }
 
-// Numbr
-fn unpack_error(e: PdfError) -> PdfError {
+fn unpack_pdf_error(e: PdfError) -> PdfError {
     if let Try {
         file: _,
         line: _,
@@ -58,7 +57,7 @@ fn unpack_error(e: PdfError) -> PdfError {
         source,
     } = e
     {
-        unpack_error(*source)
+        unpack_pdf_error(*source)
     } else {
         e
     }
