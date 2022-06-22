@@ -17,7 +17,7 @@ infer = { git = "https://github.com/bojand/infer" }
 #infer = ""
 image = { git = "https://github.com/image-rs/image" }
 #image = ""
-zip = { git = "https://github.com/zip-rs/zip" }
+zip = { git = "https://github.com/zip-rs/zip", features=[] }
 #zip = ""
 symphonia = {git = "https://github.com/pdeljanov/Symphonia", features=["mp3","aac","alac","flac","isomp4","mkv","ogg","pcm","vorbis","wav"]}
 #symphonia = {version="0.5", features=["mp3","aac","alac","flac","isomp4","mkv","ogg","pcm","vorbis","wav"]}

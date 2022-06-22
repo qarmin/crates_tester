@@ -1,8 +1,9 @@
 use crate::collect_files;
-use lofty::error::ErrorKind::Io;
-use lofty::{read_from, AudioFile, ItemKey};
+use lofty::error::ErrorKind;
+use lofty::{read_from, AudioFile, ItemKey, LoftyError};
 use rayon::prelude::*;
 use std::fs::File;
+use std::panic;
 
 pub fn lofty_check(directories: Vec<&str>) {
     let allowed_extensions = vec![
@@ -18,24 +19,35 @@ pub fn lofty_check(directories: Vec<&str>) {
     collected_files
         .into_par_iter()
         .for_each(|(path, _extension)| {
-            let mut file = match File::open(&path) {
-                Ok(t) => t,
-                Err(_) => return,
-            };
-            let tagged_file = match read_from(&mut file, true) {
-                Ok(t) => t,
-                Err(e) => {
-                    println!("Invalid file - {}, {}", path, e);
 
-                    match e.kind() {
-                        Io(_) => {}
-                        _ => {
-                            println!("Invalid file - {}, {}", path, e)
-                        }
+
+            let result : Result<_,_> = panic::catch_unwind(|| {
+                let mut file = match File::open(&path) {
+                    Ok(t) => t,
+                    Err(e) => return Err(LoftyError::new(ErrorKind::Io(e))),
+                };
+                 match read_from(&mut file, true) {
+                    Ok(t) => Ok(t),
+                    Err(e) => Err(e)
+                }
+            });
+
+
+            let tagged_file = match result {
+                Ok(t) => match t {
+                    Ok(t) => t,
+                    Err(e) => {
+                        println!("Invalid file - {}, {}", path, e);
+                        return;
                     }
+                },
+                Err(_) => {
+                    println!("BIG ERROR - {} crashed please report bug to https://github.com/Serial-ATA/lofty-rs", path);
                     return;
                 }
             };
+
+
             // println!("Valid file - {}", path);
             let properties = tagged_file.properties();
 
