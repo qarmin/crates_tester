@@ -1,12 +1,13 @@
-use crate::{collect_files, count_number_of_vec_items};
-use rayon::prelude::*;
 use std::path::Path;
 use std::process::Command;
 
+use rayon::prelude::*;
+
+use crate::{collect_files, count_number_of_vec_items};
+
 pub fn infer_check(directories: Vec<&str>, print_results: bool) {
     let allowed_extensions = vec![
-        // This extensions should be supported by inder
-        "cache", "file", "data", // // This extensions should be supported by inder
+        // This extensions should be supported by infer
         "jpg", "png", "gif", "webp", "cr2", "tif", "tiff", "bmp", "avif", "jxr", "psd", "ico",
         "mp4", "m4v", "mkv", "webm", "mov", "avi", "vmv", "mpg", "flv", "mid", "mp3", "m4a", "ogg",
         "flac", "wav", "amr", "aac", "aiff", "dsf", "ape", "epub", "zip", "tar", "rar", "gz",
@@ -17,7 +18,8 @@ pub fn infer_check(directories: Vec<&str>, print_results: bool) {
     ];
     let disabled_extensions = vec![
         // Obj is used in a lot different ways
-        "obj",
+        "obj", // Data, cache can be any type
+        "cache", "file", "data",
     ];
 
     let collected_files = collect_files(directories, allowed_extensions, disabled_extensions);

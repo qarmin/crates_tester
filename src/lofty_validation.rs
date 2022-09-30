@@ -26,7 +26,7 @@ pub fn lofty_check(directories: Vec<&str>) {
                     Ok(t) => t,
                     Err(e) => return Err(LoftyError::new(ErrorKind::Io(e))),
                 };
-                 match read_from(&mut file, true) {
+                 match read_from(&mut file) {
                     Ok(t) => Ok(t),
                     Err(e) => Err(e)
                 }
